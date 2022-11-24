@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://codepen.io/skjha5993/pen/bXqWpR.css">
+    <title>Flight Price Prediction</title>
+    <style>
+        label {
+            font-weight: 600;
+            color: #555;
+        }
+        body {
+            background-image: linear-gradient(to right, rgb(133, 79, 238) , rgb(131, 94, 242));
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="form" action="" method="POST">
+            <h2 class="text-center text-white"><br></h2>
+        <div class="row jumbotron bg-dark">
+            <div class="col-sm-12 form-group">
+                <h1 class="text-center text-white">Let's Predict!</h1>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="Dep_Time">Departure Date</label>
+                <input type="datetime-local" name="Dep_Time" class="form-control" id="Dep_Time" placeholder="" required>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="Arrival_Time">Arrival Date</label>
+                <input type="datetime-local" name="Arrival_Time" class="form-control" id="Arrival_Time" placeholder="" required>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="Source">Source</label>
+                <select id="Source" name="Source" class="form-control custom-select browser-default">
+                    <option value="None">Select any one</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Banglore">Banglore</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Chennai">Chennai</option>
+                </select>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="dist">Destination</label>
+                <select id="Destination" name="Destination" class="form-control custom-select browser-default">
+                    <option value="None">Select any one</option>
+                    <option value="Cochin">Cochin</option>
+                    <option value="Banglore">Banglore</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Kolkata">Kolkata</option>
+                </select>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="Stopage">Stopage</label>
+                <select id="Stopage" name="Stopage" class="form-control custom-select browser-default">
+                    <option value="None">Select any one</option>
+                    <option value="0">Non-Stop</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="text-white" for="Airline">Which Airline you want to travel?</label>
+                <select id="Airline" name="Airline" class="form-control custom-select browser-default">
+                    <option value="None">Select any one</option>
+                    <option value="Jet Airways">Jet Airways</option>
+                    <option value="IndiGo">IndiGo</option>
+                    <option value="Air India">Air India</option>
+                    <option value="Multiple carriers">Multiple carriers</option>
+                    <option value="SpiceJet">SpiceJet</option>
+                    <option value="Vistara">Vistara</option>
+                    <option value="Air Asia">Air Asia</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="col-sm-12 form-group">
+                <label class="text-white" for="info">Additional-Info</label>
+                <select id="info" name="info" class="form-control custom-select browser-default">
+                    <option value="None">Select any one</option>
+                    <option value="No info">No info</option>
+                    <option value="In-flight meal not included">In-flight meal not included</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="col-sm-12 form-group mb-0">
+                <button type="submit" id="sumbitBtn" class="btn btn-primary btn-lg float-right" value="Predict">Predict</button>
+             </div>           
+        </div>
+        </form>
+    </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        document.getElementById("form").addEventListener("submit", function(event) {
+            event.preventDefault();            
+            var form = new FormData();
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);                    
+
+            form.append("Dep_Time", document.getElementById("Dep_Time").value);
+            form.append("Arrival_Time", document.getElementById("Arrival_Time").value);
+            form.append("Source", document.getElementById("Source").value);
+            form.append("Destination", document.getElementById("Destination").value);
+            form.append("Stopage",document.getElementById("Stopage").value);
+            form.append("Airline", document.getElementById("Airline").value);
+            form.append("info",document.getElementById("info").value);
+            xhr.onload = function(e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);                                            
+                        swal("Predicted", `The  Flight Price from ${response.Source} to ${response.Destination} is Rs.${Math.round(response.prediction * 100)/100} price`, "success");
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            };         
+            
+            xhr.send(form);
+        });
+    </script>
+</body>
+</html>
